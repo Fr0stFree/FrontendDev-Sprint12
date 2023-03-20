@@ -1,0 +1,15 @@
+.profile__edit-button {
+  background: transparent url(../../../../src/images/edit-btn.svg) no-repeat center;
+  background-size: 10px 10px;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(255, 255, 255, 1);
+  align-self: center;
+  grid-area: edit-button;
+}
+
+@media screen and (max-width: 618px) {
+  .profile__edit-button {
+    transform: scale(0.75);
+  }
+}

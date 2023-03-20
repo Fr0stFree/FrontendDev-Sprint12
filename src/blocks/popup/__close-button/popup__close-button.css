@@ -1,0 +1,21 @@
+.popup__close-button {
+  grid-column: 3/4;
+  grid-row: 1/2;
+  width: 32px;
+  height: 32px;
+  background-color: transparent;
+  background-image: url(../../../images/close-sign.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  cursor: pointer;
+  border: none;
+}
+
+@media screen and (max-width: 618px) {
+  .popup__close-button {
+    transform: scale(.65);
+    grid-column: 2/3;
+    justify-self: end;
+  }
+}

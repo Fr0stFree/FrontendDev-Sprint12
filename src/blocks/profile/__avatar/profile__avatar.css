@@ -1,0 +1,10 @@
+.profile__avatar {
+  display: block;
+  border-radius: 50%;
+  position: absolute;
+  width: 100%;
+  aspect-ratio: 1/1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
