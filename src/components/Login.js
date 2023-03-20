@@ -1,36 +1,43 @@
-import React, { Component } from 'react';
-import { Navigate } from "react-router-dom";
+import React, {Component} from 'react';
 
 import Auth from "./Auth.js";
 import authApi from "../utils/authApi";
+import InfoTooltip from "./InfoTooltip";
 
 
 export default class Login extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isInfoTooltipOpen: false,
+      hasLoginFailed: false,
+    }
     this.handleLogin = this.handleLogin.bind(this);
   }
+  closeInfoTooltip = () => this.setState({isInfoTooltipOpen: false})
 
   async handleLogin(password, email) {
     try {
       const response = await authApi.login(password, email);
       if (response.token) {
         localStorage.setItem('token', response.token);
-        this.props.onAuthentication();
+        this.props.onAuthentication(response.token);
       }
     } catch (error) {
-      console.log(error)
+      this.setState({isInfoTooltipOpen: true, hasLoginFailed: true});
     }
   }
 
   render() {
     return (
       <>
-        {this.props.isAuthenticated && <Navigate to="/" replace={true} />}
         <Auth title="Вход"
               name="login"
               onSubmit={this.handleLogin}
               buttonTitle="Войти" />
+        <InfoTooltip hasFailed={this.state.hasLoginFailed}
+                     isOpen={this.state.isInfoTooltipOpen}
+                     onClose={this.closeInfoTooltip} />
       </>
     )
   }

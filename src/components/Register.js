@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
-import {Link, Navigate} from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
-import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import authApi from "../utils/authApi.js";
 import Auth from "./Auth.js";
 import InfoTooltip from "./InfoTooltip";
 
 
 export default class Register extends Component {
-  static contextType = CurrentUserContext;
-
   constructor(props) {
     super(props);
     this.state = {
       isInfoTooltipOpen: false,
       hasRegistrationFailed: false,
+      hasRegistered: false,
     }
     this.handleRegistration = this.handleRegistration.bind(this);
   }
@@ -23,8 +21,9 @@ export default class Register extends Component {
 
   async handleRegistration(password, email) {
     try {
-      const response = await authApi.register(password, email);
+      await authApi.register(password, email);
       this.setState({isInfoTooltipOpen: true, hasRegistrationFailed: false});
+      setTimeout(() => this.setState({hasRegistered: true}), 2500);
     } catch (error) {
       this.setState({isInfoTooltipOpen: true, hasRegistrationFailed: true});
     }
@@ -33,12 +32,14 @@ export default class Register extends Component {
   render() {
     return (
       <>
-        {this.props.isAuthenticated && <Navigate to="/" replace={true} />}
+        {this.state.hasRegistered && <Navigate to="/sign-in" replace />}
         <Auth title="Регистрация"
               name="register"
               onSubmit={this.handleRegistration}
               buttonTitle="Зарегистрироваться">
-          <p className="auth__login-hint">Уже зарегистрированы? <Link className="link" to="/sign-in">Войти</Link></p>
+          <p className="auth__login-hint">Уже зарегистрированы? <Link className="link"
+                                                                      to="/sign-in">Войти</Link>
+          </p>
         </Auth>
         <InfoTooltip hasFailed={this.state.hasRegistrationFailed}
                      isOpen={this.state.isInfoTooltipOpen}

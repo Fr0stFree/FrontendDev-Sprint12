@@ -1,5 +1,5 @@
 .header__navbar {
   margin-left: auto;
   display: flex;
-  column-gap: 5px;
+  column-gap: 24px;
 }

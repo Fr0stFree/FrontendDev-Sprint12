@@ -37,15 +37,24 @@ export default class App extends Component {
     this.handleUpdateUser = this.handleUpdateUser.bind(this);
     this.handleUpdateAvatar = this.handleUpdateAvatar.bind(this);
     this.handleAddPlace = this.handleAddPlace.bind(this);
-    this.handleAuthentication = this.handleAuthentication.bind(this);
+    this.authenticate = this.authenticate.bind(this);
   }
 
   async componentDidMount() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      await this.authenticate(token);
+    }
+  }
+
+  async authenticate(token) {
     try {
-      await this.handleAuthentication();
+      const {data: {email}} = await authApi.verifyToken(token);
+      this.setState({isAuthenticated: true});
       const [currentUser, cards] = await Promise.all([
         api.getUserInfo(), api.getInitialCards()
       ])
+      currentUser.email = email;
       this.setState({currentUser, cards});
     } catch (error) {
       console.error(error);
@@ -57,16 +66,6 @@ export default class App extends Component {
   handleEditAvatarClick = () => this.setState({ isEditAvatarPopupOpen: true })
 
   handleAddPlaceClick = () => this.setState({ isAddPlacePopupOpen: true })
-
-  async handleAuthentication() {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await authApi.verifyToken(token);
-      this.setState({isAuthenticated: true});
-    } catch (error) {
-      this.setState({isAuthenticated: false});
-    }
-  }
 
   async handleCardLikeClick(card) {
     const isLiked = card.likes.some(user => user._id === this.state.currentUser._id);
@@ -138,11 +137,10 @@ export default class App extends Component {
     return (
       <div className="page">
         <CurrentUserContext.Provider value={this.state.currentUser}>
-          <Header />
+          <Header isAuthenticated={this.state.isAuthenticated} />
           <Routes>
-            <Route path="/sign-up" element={<Register isAuthenticated={this.state.isAuthenticated} />} />
-            <Route path="/sign-in" element={<Login isAuthenticated={this.state.isAuthenticated}
-                                                   onAuthentication={this.handleAuthentication}/>} />
+            <Route path="/sign-up" element={this.state.isAuthenticated ? <Navigate to="/" /> : <Register />} />
+            <Route path="/sign-in" element={this.state.isAuthenticated ? <Navigate to="/" /> : <Login onAuthentication={this.authenticate} />} />
             <Route path="/" element={<ProtectedRoute component={Main}
                                                      onEditProfile={this.handleEditProfileClick}
                                                      onAddPlace={this.handleAddPlaceClick}
