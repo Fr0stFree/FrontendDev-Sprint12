@@ -1,0 +1,10 @@
+.popup__content_type_tooltip {
+  min-height: 330px;
+  justify-content: space-evenly;
+}
+
+@media screen and (max-width: 618px) {
+  .popup__content {
+    min-height: 308px;
+  }
+}

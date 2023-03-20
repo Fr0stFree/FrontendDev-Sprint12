@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Route, Routes, Navigate } from 'react-router-dom';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import defaultAvatarPath from '../images/Jack-Iv-Kusto.svg';
@@ -11,6 +12,10 @@ import ImagePopup from "./ImagePopup.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
 import AddPlacePopup from "./AddPlacePopup.js";
+import Register from "./Register.js";
+import Login from "./Login.js";
+import ProtectedRoute from "./ProtectedRoute.js";
+import authApi from "../utils/authApi";
 
 
 export default class App extends Component {
@@ -18,6 +23,7 @@ export default class App extends Component {
     super(props);
     this.state = {
       currentUser: {name: "Жак-Ив Кусто", about: "Исследователь Океана", avatar: defaultAvatarPath},
+      isAuthenticated: false,
       cards: [],
       isEditProfilePopupOpen: false,
       isEditAvatarPopupOpen: false,
@@ -31,10 +37,12 @@ export default class App extends Component {
     this.handleUpdateUser = this.handleUpdateUser.bind(this);
     this.handleUpdateAvatar = this.handleUpdateAvatar.bind(this);
     this.handleAddPlace = this.handleAddPlace.bind(this);
+    this.handleAuthentication = this.handleAuthentication.bind(this);
   }
 
   async componentDidMount() {
     try {
+      await this.handleAuthentication();
       const [currentUser, cards] = await Promise.all([
         api.getUserInfo(), api.getInitialCards()
       ])
@@ -49,6 +57,16 @@ export default class App extends Component {
   handleEditAvatarClick = () => this.setState({ isEditAvatarPopupOpen: true })
 
   handleAddPlaceClick = () => this.setState({ isAddPlacePopupOpen: true })
+
+  async handleAuthentication() {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await authApi.verifyToken(token);
+      this.setState({isAuthenticated: true});
+    } catch (error) {
+      this.setState({isAuthenticated: false});
+    }
+  }
 
   async handleCardLikeClick(card) {
     const isLiked = card.likes.some(user => user._id === this.state.currentUser._id);
@@ -121,13 +139,21 @@ export default class App extends Component {
       <div className="page">
         <CurrentUserContext.Provider value={this.state.currentUser}>
           <Header />
-          <Main onEditProfile={this.handleEditProfileClick}
-                onAddPlace={this.handleAddPlaceClick}
-                cards={this.state.cards}
-                onCardClick={this.handleCardClick}
-                onCardDeleteClick={this.handleCardDeleteClick}
-                onCardLikeClick={this.handleCardLikeClick}
-                onEditAvatar={this.handleEditAvatarClick} />
+          <Routes>
+            <Route path="/sign-up" element={<Register isAuthenticated={this.state.isAuthenticated} />} />
+            <Route path="/sign-in" element={<Login isAuthenticated={this.state.isAuthenticated}
+                                                   onAuthentication={this.handleAuthentication}/>} />
+            <Route path="/" element={<ProtectedRoute component={Main}
+                                                     onEditProfile={this.handleEditProfileClick}
+                                                     onAddPlace={this.handleAddPlaceClick}
+                                                     cards={this.state.cards}
+                                                     isAuthenticated={this.state.isAuthenticated}
+                                                     onCardClick={this.handleCardClick}
+                                                     onCardDeleteClick={this.handleCardDeleteClick}
+                                                     onCardLikeClick={this.handleCardLikeClick}
+                                                     onEditAvatar={this.handleEditAvatarClick} />} />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
           <Footer />
           <PopupWithForm title="Вы уверены?"
                          name="confirm"

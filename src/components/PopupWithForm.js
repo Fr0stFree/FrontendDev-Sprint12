@@ -10,7 +10,7 @@ export default class PopupWithForm extends Component {
                   onClick={this.props.onClose}
                   className="button popup__close-button"
                   aria-label="Закрыть всплывающее окно"></button>
-          <div className="popup__form">
+          <div className="popup__content">
             <h2 className="popup__title">{this.props.title}</h2>
             <form className={`popup__${this.props.name}-form`}
                   onSubmit={this.props.onSubmit}
