@@ -1,6 +1,7 @@
 .link {
   text-decoration: none;
   transition: opacity .6s;
+  color: inherit;
 }
 
 .link:hover {

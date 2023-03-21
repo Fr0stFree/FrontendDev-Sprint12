@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 
-import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import defaultAvatarPath from '../images/Jack-Iv-Kusto.svg';
-import api from '../utils/api.js';
 import Header from './Header.js';
 import Main from "./Main.js";
 import Footer from "./Footer.js";
@@ -14,8 +12,10 @@ import EditAvatarPopup from "./EditAvatarPopup.js";
 import AddPlacePopup from "./AddPlacePopup.js";
 import Register from "./Register.js";
 import Login from "./Login.js";
+import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import ProtectedRoute from "./ProtectedRoute.js";
 import authApi from "../utils/authApi";
+import api from '../utils/api.js';
 
 
 export default class App extends Component {
@@ -139,8 +139,10 @@ export default class App extends Component {
         <CurrentUserContext.Provider value={this.state.currentUser}>
           <Header isAuthenticated={this.state.isAuthenticated} />
           <Routes>
-            <Route path="/sign-up" element={this.state.isAuthenticated ? <Navigate to="/" /> : <Register />} />
-            <Route path="/sign-in" element={this.state.isAuthenticated ? <Navigate to="/" /> : <Login onAuthentication={this.authenticate} />} />
+            <Route path="/sign-up" element={this.state.isAuthenticated ? <Navigate to="/" />
+                                                                       : <Register />} />
+            <Route path="/sign-in" element={this.state.isAuthenticated ? <Navigate to="/" />
+                                                                       : <Login onAuthentication={this.authenticate} />} />
             <Route path="/" element={<ProtectedRoute component={Main}
                                                      onEditProfile={this.handleEditProfileClick}
                                                      onAddPlace={this.handleAddPlaceClick}
@@ -149,7 +151,7 @@ export default class App extends Component {
                                                      onCardClick={this.handleCardClick}
                                                      onCardDeleteClick={this.handleCardDeleteClick}
                                                      onCardLikeClick={this.handleCardLikeClick}
-                                                     onEditAvatar={this.handleEditAvatarClick} />} />} />
+                                                     onEditAvatar={this.handleEditAvatarClick} />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
           <Footer />

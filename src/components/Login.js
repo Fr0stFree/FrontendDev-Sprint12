@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 
 import Auth from "./Auth.js";
-import authApi from "../utils/authApi";
 import InfoTooltip from "./InfoTooltip";
+import authApi from "../utils/authApi";
 
 
 export default class Login extends Component {
