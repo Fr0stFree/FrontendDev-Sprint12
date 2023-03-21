@@ -17,8 +17,7 @@ export default class PopupWithForm extends Component {
                   name={`${this.props.name}-form`}>
               {this.props.children}
               <button type="submit"
-                      className="popup__input popup__input_type_submit">{this.props.buttonTitle}
-              </button>
+                      className="popup__input popup__input_type_submit">{this.props.buttonTitle}</button>
             </form>
           </div>
         </div>
