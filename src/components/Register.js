@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import authApi from "../utils/authApi.js";
 import Auth from "./Auth.js";
 import InfoTooltip from "./InfoTooltip";
+import NavigatePage from "./NavigatePage";
 
 
 export default class Register extends Component {
@@ -12,7 +13,7 @@ export default class Register extends Component {
     this.state = {
       isInfoTooltipOpen: false,
       hasRegistrationFailed: false,
-      hasRegistered: false,
+      shouldNavigate: false,
     }
     this.handleRegistration = this.handleRegistration.bind(this);
   }
@@ -23,7 +24,7 @@ export default class Register extends Component {
     try {
       await authApi.register(password, email);
       this.setState({isInfoTooltipOpen: true, hasRegistrationFailed: false});
-      setTimeout(() => this.setState({hasRegistered: true}), 2500);
+      setTimeout(() => this.setState({shouldNavigate: true}), 2500);
     } catch (error) {
       this.setState({isInfoTooltipOpen: true, hasRegistrationFailed: true});
     }
@@ -31,8 +32,7 @@ export default class Register extends Component {
 
   render() {
     return (
-      <>
-        {this.state.hasRegistered && <Navigate to="/sign-in" replace />}
+      <NavigatePage to="/sign-in" isNavigate={this.state.shouldNavigate}>
         <Auth title="Регистрация"
               name="register"
               onSubmit={this.handleRegistration}
@@ -44,7 +44,7 @@ export default class Register extends Component {
         <InfoTooltip hasFailed={this.state.hasRegistrationFailed}
                      isOpen={this.state.isInfoTooltipOpen}
                      onClose={this.closeInfoTooltip} />
-      </>
+      </NavigatePage>
     )
   }
 }
